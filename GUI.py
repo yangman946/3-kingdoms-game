@@ -5,6 +5,9 @@ from main import logic
 class GUI:
     def __init__(self):
         pygame.init()
+
+        self.AI = False # trigger this if you want the AI to play
+
         self.width = 576
         self.height = 720
         self.screen = pygame.display.set_mode((self.width, self.height))
@@ -36,12 +39,22 @@ class GUI:
             }
         
         self.logic = logic()
+        self.logic.grids.append(self.grid.copy())
 
         self.render = False # trigger when rendering legal moves
         self.index = 0
         self.moves = []
         self.location = []
         self.padding = 20
+        
+        self.won = False
+
+        if self.AI:
+            self.getMove() # get an array of moves to win
+
+    def getMove(self):
+        pass
+
 
     def run(self):
         while self.running:
@@ -49,23 +62,32 @@ class GUI:
             self.screen.fill((0, 0, 0))
             self.drawBlocks()
 
-            if self.render:
+            if self.render and not self.AI:
                 self.drawLegalMoves(self.index, self.moves)
+
+            if self.AI:
+                # slowly play each move from self.getMove()
+                pass
+            
             # pygame.QUIT event means the user clicked X to close your window
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
                 
-                p = pygame.key.get_pressed()
-                if p[pygame.K_u]:
-                    self.undo()
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
+
+                if event.type == pygame.KEYUP and not self.AI:
+                    if event.key == pygame.K_u: 
+                        self.undo()
+
+                if event.type == pygame.MOUSEBUTTONDOWN and not self.AI: # remove the AI part if you wanna add buttons
                     mouseX, mouseY = pygame.mouse.get_pos()
                     self.translate(mouseX, mouseY)
+
+            
             pygame.display.update()
 
-    def drawLegalMoves(self, index, legalmoves):
+    def drawLegalMoves(self, index, legalmoves): # not needed for AI
         row, col = self.logic.index2rowcol(index)
         x = col * self.width/4
         y = row * self.height/5
@@ -92,10 +114,16 @@ class GUI:
         pygame.display.flip()
         
     def undo(self):
-        if not self.render:
-            g = self.logic.undoMove()
-            if g != None:
-                self.grid = g
+        print("pressed")
+        self.render = False
+        self.index = 0
+        self.moves = []
+        self.location = []
+        self.undoMove = False
+        g = self.logic.undoMove()
+        print(g)
+        if g != None:
+            self.grid = g.copy()
 
     def drawBlocks(self, indexAnim = 0):
         i = 0
@@ -160,7 +188,8 @@ class GUI:
                 self.grid = self.logic.makeMove(self.grid, move, self.index) # animate???
                 print(self.grid)
                 if self.logic.checkWin(self.grid):
-                    print("GAME WON!")
+                    print(f"GAME WON IN {len(self.logic.grids)-1} MOVES!")
+                    self.won = True # make a pretty win screen
                     pass
 
             self.render = False

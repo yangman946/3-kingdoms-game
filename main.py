@@ -62,7 +62,7 @@ class logic:
                     grid[index + (4*e) + i+1] = piece               
 
 
-        self.grids.append(grid)
+        self.grids.append(list(grid).copy())
 
 
         return grid
@@ -73,10 +73,12 @@ class logic:
 
     def undoMove(self):
         # undo move
-        if len(self.grids) < 2:
-            return None
-        self.grids.pop()
-        return self.grids[-1]
+        print(self.grids)
+        if len(self.grids) > 1:
+
+            self.grids.pop()
+            return self.grids[-1]
+        return None
         
 
     def checkAbove(self, grid, indices):
