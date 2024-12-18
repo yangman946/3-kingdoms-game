@@ -1,6 +1,7 @@
 import pygame
 
 from main import logic
+import time
 
 class GUI:
     def __init__(self):
@@ -49,10 +50,16 @@ class GUI:
         
         self.won = False
 
+        self.AIMoves = [[1, 2, 2, 3, 1, 2, 2, 3, 4, 0, 0, 6, 4, 5, 5, 6, 7, 8, 9, 10], [1, 2, 2, 3, 1, 2, 2, 3, 4, 5, 5, 6, 4, 0, 0, 6, 7, 8, 9, 10], [1, 2, 2, 3, 1, 2, 2, 3, 4, 0, 0, 6, 4, 8, 5, 6, 7, 0, 9, 10], [1, 0, 0, 3, 1, 2, 2, 3, 4, 2, 2, 6, 4, 8, 5, 6, 7, 0, 9, 10], [1, 2, 2, 3, 1, 2, 2, 3, 4, 0, 0, 6, 4, 8, 5, 6, 0, 7, 9, 10], [1, 0, 0, 3, 1, 2, 2, 3, 4, 2, 2, 6, 4, 8, 5, 6, 0, 7, 9, 10], [1, 2, 2, 3, 1, 2, 2, 3, 0, 0, 0, 6, 4, 8, 5, 6, 4, 7, 9, 10], [0, 2, 2, 3, 1, 2, 2, 3, 1, 0, 0, 6, 4, 8, 5, 6, 4, 7, 9, 10], [1, 0, 0, 3, 1, 2, 2, 3, 0, 2, 2, 6, 4, 8, 5, 6, 4, 7, 9, 10], [0, 0, 0, 3, 1, 2, 2, 3, 1, 2, 2, 6, 4, 8, 5, 6, 4, 7, 9, 10], [1, 2, 2, 3, 1, 2, 2, 3, 0, 0, 0, 6, 4, 8, 5, 6, 4, 7, 9, 10]]
+        self.CurrentMove = 0
+        self.delay = 2
+        self.newTime = time.time() + self.delay
+
         if self.AI:
             self.getMove() # get an array of moves to win
 
     def getMove(self):
+        # self.AIMoves =
         pass
 
 
@@ -67,6 +74,16 @@ class GUI:
 
             if self.AI:
                 # slowly play each move from self.getMove()
+                if time.time() > self.newTime:
+                    self.newTime += self.delay
+                    self.grid = self.AIMoves[self.CurrentMove]
+                    self.CurrentMove += 1
+
+                    if self.logic.checkWin(self.grid):
+                        print(f"GAME WON")
+                        self.won = True # make a pretty win screen
+                        pass
+                    
                 pass
             
             # pygame.QUIT event means the user clicked X to close your window
@@ -163,7 +180,6 @@ class GUI:
                         count[self.grid[i]] -= 1
                     
                 i += 1
-
 
 
 

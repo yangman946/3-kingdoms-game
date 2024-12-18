@@ -73,7 +73,7 @@ class logic:
 
     def undoMove(self):
         # undo move
-        print(self.grids)
+        #print(self.grids)
         if len(self.grids) > 1:
 
             self.grids.pop()
@@ -132,6 +132,13 @@ class logic:
 
     def getDimensions(self, piece):
         return self.dimension[piece]
+    
+    
+    def isLastMove(self, grid):
+        # checks if the current grid has been recently played
+        if len(self.grids) < 3:
+            return False
+        return self.grids[-3] == grid
         
     
 
