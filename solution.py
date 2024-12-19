@@ -10,16 +10,16 @@ class Solution:
         self.grid = grid
         self.gridsequence = []
         self.moveshistory = []
-        self.depth = 7
+        self.depth = 100
+        self.nodes = 0
         
     def moveLogic(self, grid): # output the collection of grids
         self.grid = grid
         bestgrid = []
         bestscore = -10000
+        self.nodes = 0
 
-        moves = self.getAllLegalMoves(self.grid) # get first set of legal moves
-        #print(f"moves: {moves}")
-        random.shuffle(moves)
+        moves = self.rankMoves(self.grid, self.getAllLegalMoves(self.grid))
         #print(f"random: {moves}")
 
         for move in moves: # move each legal move
@@ -46,6 +46,22 @@ class Solution:
 
         #self.MovesToPlay.append(bestmove)
         return bestgrid.copy()
+    
+    def rankMoves(self, grid, moves):
+        score = []
+        for move in moves:
+            newGrid = self.logic.makeMove(grid.copy(), move[1].index(True), move[0])
+            movesx = self.getAllLegalMoves(newGrid) # WHY IS IT STILL PLAYING ILLEGAL MOVES????
+            self.logic.undoMove() # undo the move
+            score.append(len(movesx) + self.logic.evaluateVictory(newGrid))
+        #print(score)
+        sx, sy = zip(*sorted(zip(score, moves)))
+        #print(moves)
+        #print(sy)
+        return sy[::-1]
+        
+
+
 
     def getAllLegalMoves(self, grid):
         #print(grid)
@@ -69,22 +85,21 @@ class Solution:
         # first get root indicies of all pieces
         # next find all possible legal moves for pieces
         #bestgrid = []
-            
-        moves = self.getAllLegalMoves(grid) # WHY IS IT STILL PLAYING ILLEGAL MOVES????
-        random.shuffle(moves)
+        self.nodes += 1
+
+        moves = self.rankMoves(grid, self.getAllLegalMoves(grid))
         if len(moves) == 0: # dead end is always a lose
             return -10000
         
-        if grid in self.moveshistory[-10:]: # if repetition
-            return self.moveshistory[-10:].index(grid) * -100
+        if grid in self.moveshistory: # if repetition
+            return self.moveshistory.index(grid) * -10
         
         if self.logic.checkWin(grid): # if win achieved
             return 10000
         
 
         if depth == 0: # if we ran out of depth
-            score = grid.index(2)
-            return score * 10 # maybe check how close we were to winning (dist to bottom?)
+            return self.logic.evaluateVictory(grid) # how close were we to winning?
         
 
         bestScore = -10000 
@@ -124,5 +139,5 @@ if __name__ == "__main__":
             4, 0, 0, 6,
             7, 8, 9, 10]
     sol = Solution(grid=grid)
-    m = sol.moveLogic()
+    m = sol.moveLogic(grid)
     print(m)

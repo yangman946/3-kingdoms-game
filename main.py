@@ -140,5 +140,8 @@ class logic:
             return False
         return self.grids[-3] == grid
         
+    def evaluateVictory(self, grid):
+        score = grid.index(2)
+        return score * 10 - 10 # maybe check how close we were to winning (dist to bottom?)
     
 
