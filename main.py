@@ -101,7 +101,7 @@ class logic:
         for i in indices:
             if i - 1 < 0: # out of bounds
                 return False
-            elif i + 4 % 4 == 0: # on left edge
+            elif i in [0, 4, 8, 12, 16]: # on left edge
                 return False
             elif grid[i-1] != 0: # piece is blocking
                 return False
@@ -112,7 +112,7 @@ class logic:
         for i in indices:
             if i + 1 >= len(grid):
                 return False
-            elif i + 1 % 4 == 0: # on right edge
+            elif i in [3, 7, 11, 15, 19]: # on right edge
                 return False
             elif grid[i+1] != 0: # piece is blocking
                 return False

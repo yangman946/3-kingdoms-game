@@ -1,13 +1,14 @@
 import pygame
 
 from main import logic
+from solution import Solution
 import time
 
 class GUI:
     def __init__(self):
         pygame.init()
 
-        self.AI = False # trigger this if you want the AI to play
+        self.AI = True # trigger this if you want the AI to play
 
         self.width = 576
         self.height = 720
@@ -24,6 +25,8 @@ class GUI:
                      4, 5, 5, 6,
                      4, 0, 0, 6,
                      7, 8, 9, 10]
+        
+
         
 
         #self.grid = [1, 2, 2, 3, 1, 2, 2, 3, 5, 5, 9, 6, 0, 4, 8, 6, 0, 4, 7, 10]
@@ -50,16 +53,24 @@ class GUI:
         
         self.won = False
 
-        self.AIMoves = [[1, 2, 2, 3, 1, 2, 2, 3, 4, 0, 0, 6, 4, 5, 5, 6, 7, 8, 9, 10], [1, 2, 2, 3, 1, 2, 2, 3, 4, 5, 5, 6, 4, 0, 0, 6, 7, 8, 9, 10], [1, 2, 2, 3, 1, 2, 2, 3, 4, 0, 0, 6, 4, 8, 5, 6, 7, 0, 9, 10], [1, 0, 0, 3, 1, 2, 2, 3, 4, 2, 2, 6, 4, 8, 5, 6, 7, 0, 9, 10], [1, 2, 2, 3, 1, 2, 2, 3, 4, 0, 0, 6, 4, 8, 5, 6, 0, 7, 9, 10], [1, 0, 0, 3, 1, 2, 2, 3, 4, 2, 2, 6, 4, 8, 5, 6, 0, 7, 9, 10], [1, 2, 2, 3, 1, 2, 2, 3, 0, 0, 0, 6, 4, 8, 5, 6, 4, 7, 9, 10], [0, 2, 2, 3, 1, 2, 2, 3, 1, 0, 0, 6, 4, 8, 5, 6, 4, 7, 9, 10], [1, 0, 0, 3, 1, 2, 2, 3, 0, 2, 2, 6, 4, 8, 5, 6, 4, 7, 9, 10], [0, 0, 0, 3, 1, 2, 2, 3, 1, 2, 2, 6, 4, 8, 5, 6, 4, 7, 9, 10], [1, 2, 2, 3, 1, 2, 2, 3, 0, 0, 0, 6, 4, 8, 5, 6, 4, 7, 9, 10]]
+        self.AIMoves = []
         self.CurrentMove = 0
         self.delay = 2
         self.newTime = time.time() + self.delay
 
+        
+
         if self.AI:
-            self.getMove() # get an array of moves to win
+            self.s = Solution(self.grid)
+            self.lastL = 0
+            #self.getMove() # get an array of moves to win
+            self.AIMoves.append(self.grid.copy())
+
 
     def getMove(self):
         # self.AIMoves =
+        
+        self.AIMoves.append(self.s.moveLogic(self.grid))
         pass
 
 
@@ -74,10 +85,13 @@ class GUI:
 
             if self.AI:
                 # slowly play each move from self.getMove()
-                if time.time() > self.newTime:
-                    self.newTime += self.delay
+
+                if len(self.AIMoves) > self.lastL:
+                    #self.newTime += self.delay
                     self.grid = self.AIMoves[self.CurrentMove]
                     self.CurrentMove += 1
+                    self.lastL += 1
+                    self.getMove()
 
                     if self.logic.checkWin(self.grid):
                         print(f"GAME WON")
