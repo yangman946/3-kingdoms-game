@@ -7,7 +7,7 @@ Also known as Klotski, the three kingdoms game is a sliding puzzle on a 4x5 grid
 <ol>
     <li>Clone this repository</li>
     <li>Install requirements `pip install -r requirements.txt`</li>
-    <li>run `main.py` to try this puzzle yourself</li>
+    <li>run `GUI.py` to try this puzzle yourself</li>
 </ol>
 
 ### Solutions
