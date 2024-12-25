@@ -1,14 +1,16 @@
 import pygame
 
 from main import logic
-from solution import Solution
+#from solution import Solution
 import time
+import os
+import pickle
 
 class GUI:
     def __init__(self):
         pygame.init()
 
-        self.AI = True # trigger this if you want the AI to play
+        self.AI = True # trigger this if you want the solution
 
         self.width = 576
         self.height = 720
@@ -55,23 +57,22 @@ class GUI:
 
         self.AIMoves = []
         self.CurrentMove = 0
-        self.delay = 2
+        self.delay = 1
         self.newTime = time.time() + self.delay
 
         
 
         if self.AI:
-            self.s = Solution(self.grid)
-            self.lastL = 0
+            #self.s = Solution(self.grid)
+            #self.lastL = 0
             #self.getMove() # get an array of moves to win
-            self.AIMoves.append(self.grid.copy())
+            if os.path.exists("data.pkl"):
+                with open("solution.pkl", "rb") as file:
+                    self.AIMoves = pickle.load(file)
+                    print(f"Solution is {len(self.AIMoves)} moves long")
 
 
-    def getMove(self):
-        # self.AIMoves =
-        
-        self.AIMoves.append(self.s.moveLogic(self.grid))
-        pass
+
 
 
     def run(self):
@@ -86,19 +87,17 @@ class GUI:
             if self.AI:
                 # slowly play each move from self.getMove()
 
-                if len(self.AIMoves) > self.lastL:
-                    #self.newTime += self.delay
+                if time.time() > self.newTime:
+                    self.newTime += self.delay
+                    
                     self.grid = self.AIMoves[self.CurrentMove]
                     self.CurrentMove += 1
-                    self.lastL += 1
-                    self.getMove()
 
                     if self.logic.checkWin(self.grid):
                         print(f"GAME WON")
                         self.won = True # make a pretty win screen
-                        pass
-                    
-                pass
+                        self.AI = False
+
             
             # pygame.QUIT event means the user clicked X to close your window
             for event in pygame.event.get():

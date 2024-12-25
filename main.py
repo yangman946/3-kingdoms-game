@@ -69,7 +69,7 @@ class logic:
         
 
     def checkWin(self, grid):
-        return (2 in grid[-4:])
+        return (grid[17] == 2 and grid[18] == 2)
 
     def undoMove(self):
         # undo move
